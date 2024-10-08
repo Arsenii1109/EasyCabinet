@@ -3,8 +3,8 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-} from '@nestjs/common';
-import { FastifyReply } from 'fastify';
+} from "@nestjs/common";
+import { FastifyReply } from "fastify";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,13 +16,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let message: string = exception.message;
     const errorResponse = <string | ErrorResponse>exception.getResponse();
     if (errorResponse) {
-      if (typeof errorResponse === 'string') {
+      if (typeof errorResponse === "string") {
         message = errorResponse;
       } else if (errorResponse.message) {
-        if (typeof errorResponse.message === 'string') {
+        if (typeof errorResponse.message === "string") {
           message = errorResponse.message;
         } else {
-          message = errorResponse.message.join(', ');
+          message = errorResponse.message.join(", ");
         }
       }
     }

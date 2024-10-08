@@ -1,16 +1,16 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { compare, hash } from 'bcrypt';
-import { Cache } from 'cache-manager';
-import { FastifyReply } from 'fastify';
+import { CACHE_MANAGER } from "@nestjs/cache-manager";
+import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { compare, hash } from "bcrypt";
+import { Cache } from "cache-manager";
+import { FastifyReply } from "fastify";
 
-import { UsersService } from '../users/users.service';
-import { AuthDto } from './dto/auth.dto';
-import { JwtPayload, JwtPayloadExtra } from './jwt.strategy';
+import { UsersService } from "../users/users.service";
+import { AuthDto } from "./dto/auth.dto";
+import { JwtPayload, JwtPayloadExtra } from "./jwt.strategy";
 
 @Injectable()
 export class AuthService {
@@ -25,11 +25,11 @@ export class AuthService {
     const user = await this.usersService.findUser({ login });
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException("User not found");
     }
 
     if (!(await this.checkPassword(password, user.password))) {
-      throw new BadRequestException('Invalid password');
+      throw new BadRequestException("Invalid password");
     }
 
     return user;
@@ -42,7 +42,7 @@ export class AuthService {
 
   public async register(data: AuthDto): Promise<any> {
     if (await this.usersService.checkIfUserExists(data)) {
-      throw new BadRequestException('User already exists');
+      throw new BadRequestException("User already exists");
     }
 
     data.password = await this.hashPassword(data.password);
@@ -83,7 +83,7 @@ export class AuthService {
 
   private async checkAndRemoveToken(refreshToken: string) {
     const accessToken = await this.getRefreshTokenData(refreshToken);
-    if (!accessToken) throw new BadRequestException('Токен не найден');
+    if (!accessToken) throw new BadRequestException("Токен не найден");
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { exp, iat, ...userData } =
@@ -115,20 +115,20 @@ export class AuthService {
     await this.cacheManager.set(
       `refreshToken:${refreshToken}`,
       accessToken,
-      this.configService.get('COOKIE_EXPIRES_IN', 2592000) * 1000,
+      this.configService.get("COOKIE_EXPIRES_IN", 2592000) * 1000,
     );
 
     return refreshToken;
   }
 
   public setRefreshTokenCookie(response: FastifyReply, refreshToken: string) {
-    response.setCookie('refreshToken', refreshToken, {
+    response.setCookie("refreshToken", refreshToken, {
       signed: true,
       httpOnly: true,
-      secure: this.configService.get('COOKIE_SECURE', 'false') === 'true',
-      domain: this.configService.get('COOKIE_DOMAIN', 'localhost'),
-      path: '/auth',
-      maxAge: this.configService.get('COOKIE_EXPIRES_IN', 2592000), // 30 days
+      secure: this.configService.get("COOKIE_SECURE", "false") === "true",
+      domain: this.configService.get("COOKIE_DOMAIN", "localhost"),
+      path: "/auth",
+      maxAge: this.configService.get("COOKIE_EXPIRES_IN", 2592000), // 30 days
     });
   }
 

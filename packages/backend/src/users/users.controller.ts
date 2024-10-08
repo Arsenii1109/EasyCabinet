@@ -2,22 +2,24 @@ import {
   FileFieldsInterceptor,
   MemoryStorageFile,
   UploadedFiles,
-} from '@blazity/nest-file-fastify';
+} from "@blazity/nest-file-fastify";
 import {
   Body,
   Controller,
   Get,
+  Post,
   Put,
   Request,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
+} from "@nestjs/common";
 
-import { JwtAuthGuard, JwtAuthRequest } from '../auth/jwt-auth.guard';
-import { ProfileDto } from './dto/profile.dto';
-import { UsersService } from './users.service';
+import { JwtAuthGuard, JwtAuthRequest } from "../auth/jwt-auth.guard";
+import { ProfileDto } from "./dto/profile.dto";
+import { UsersService } from "./users.service";
+import { UpdatePasswordDto } from "./dto/updatePassword.dto";
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -27,12 +29,21 @@ export class UsersController {
     return this.usersService.getProfile(req.user);
   }
 
+  @Post("update/password")
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Request() req: JwtAuthRequest,
+    @Body() data: UpdatePasswordDto,
+  ) {
+    return await this.usersService.updatePassword(req.user, data);
+  }
+
   @Put()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'skin', maxCount: 1 },
-      { name: 'cape', maxCount: 1 },
+      { name: "skin", maxCount: 1 },
+      { name: "cape", maxCount: 1 },
     ]),
   )
   async updateProfile(

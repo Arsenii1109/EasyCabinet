@@ -1,14 +1,14 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
-import { Injectable } from '@nestjs/common';
-import { In } from 'typeorm';
+import { Injectable } from "@nestjs/common";
+import { In } from "typeorm";
 
-import { AuthService } from '../auth/auth.service';
-import { UsersService } from '../users/users.service';
-import { HasJoinedDto } from './dto/hasJoined.dto';
-import { JoinDto } from './dto/join.dto';
-import { ProfileDto } from './dto/profile.dto';
-import { ProfilesDto } from './dto/profiles.dto';
+import { AuthService } from "../auth/auth.service";
+import { UsersService } from "../users/users.service";
+import { HasJoinedDto } from "./dto/hasJoined.dto";
+import { JoinDto } from "./dto/join.dto";
+import { ProfileDto } from "./dto/profile.dto";
+import { ProfilesDto } from "./dto/profiles.dto";
 
 @Injectable()
 export class AuroraService {

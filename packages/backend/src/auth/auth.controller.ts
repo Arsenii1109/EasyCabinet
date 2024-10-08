@@ -7,17 +7,17 @@ import {
   Post,
   Req,
   Res,
-} from '@nestjs/common';
-import { FastifyReply, FastifyRequest } from 'fastify';
+} from "@nestjs/common";
+import { FastifyReply, FastifyRequest } from "fastify";
 
-import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthService } from "./auth.service";
+import { AuthDto } from "./dto/auth.dto";
 
-@Controller('auth')
+@Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
+  @Post("login")
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() { login, password }: AuthDto,
@@ -32,19 +32,19 @@ export class AuthController {
     return { accessToken };
   }
 
-  @Post('register')
+  @Post("register")
   register(@Body() data: AuthDto) {
     return this.authService.register(data);
   }
 
-  @Post('logout')
+  @Post("logout")
   @HttpCode(HttpStatus.OK)
   logout(
     @Req() req: FastifyRequest,
     @Res({ passthrough: true }) response: FastifyReply,
   ) {
     const oldRefreshToken = req.cookies.refreshToken;
-    response.clearCookie('refreshToken');
+    response.clearCookie("refreshToken");
 
     if (!oldRefreshToken) {
       return;
@@ -59,7 +59,7 @@ export class AuthController {
     this.authService.logout(parsedRefreshToken.value);
   }
 
-  @Post('refresh')
+  @Post("refresh")
   @HttpCode(HttpStatus.OK)
   async refresh(
     @Req() req: FastifyRequest,
@@ -68,13 +68,13 @@ export class AuthController {
     const oldRefreshToken = req.cookies.refreshToken;
 
     if (!oldRefreshToken) {
-      throw new BadRequestException('No refresh token');
+      throw new BadRequestException("No refresh token");
     }
 
     const parsedRefreshToken = req.unsignCookie(oldRefreshToken);
 
     if (!parsedRefreshToken.valid) {
-      throw new BadRequestException('Invalid refresh token');
+      throw new BadRequestException("Invalid refresh token");
     }
 
     const { accessToken, refreshToken } = await this.authService.refresh(
